@@ -14,6 +14,11 @@ const clients = [
     image: "https://yt3.googleusercontent.com/sv9i_OP0uL2wvUJfCbgaivEhWSnnZl6uV23xkPxMVqxANnpBR5ej3MrSEFG9uZuZxV-E__Md=s900-c-k-c0x00ffffff-no-rj",
   },
   {
+    name: "Freecss",
+    subscribers: "51k",
+    image: "https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/05e74d8c757b492f31df6577aaf83174~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=b9e62073&x-expires=1769414400&x-signature=vl%2FRO1McBPQhOUtTrK3kmGE9BpY%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my",
+  },
+  {
     name: "Virion Mkt",
     subscribers: "Empresa",
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROVbd0MhkUze_VEWrbU_d52TOwVoN1JbfDqA&s",
