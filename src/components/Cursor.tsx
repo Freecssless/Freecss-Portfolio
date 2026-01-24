@@ -77,7 +77,7 @@ export default function Cursor() {
       height: 32,
       width: 32,
       backgroundColor: "white", // Visible on dark background
-      mixBlendMode: "normal" as any,
+      mixBlendMode: "normal",
     },
     text: {
       height: 150,
@@ -85,7 +85,7 @@ export default function Cursor() {
       x: mousePosition.x - 75,
       y: mousePosition.y - 75,
       backgroundColor: "white",
-      mixBlendMode: "difference" as any,
+      mixBlendMode: "difference",
     }
   };
 
