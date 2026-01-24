@@ -6,6 +6,25 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Freecss Portfolio",
   description: "Editor Profesional de Videos - Convierte tus ideas en experiencias visuales",
+  icons: {
+    icon: [
+      {
+        url: "https://i.postimg.cc/gwCGsMmL/icon-pwb.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+    ],
+    apple: [
+      {
+        url: "https://i.postimg.cc/gwCGsMmL/icon-pwb.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
+    shortcut: [
+      "https://i.postimg.cc/gwCGsMmL/icon-pwb.png",
+    ],
+  },
 };
 
 export default function RootLayout({
