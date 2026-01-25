@@ -56,7 +56,7 @@ export default function PageLoader() {
             >
               <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
               <img
-                src="https://i.postimg.cc/Hj51h6KS/Galede-OSio.png"
+                src="https://i.postimg.cc/gwCGsMmL/icon-pwb.png"
                 alt="Logo"
                 className="relative w-full h-full rounded-full object-cover border-2 border-primary/20"
               />
