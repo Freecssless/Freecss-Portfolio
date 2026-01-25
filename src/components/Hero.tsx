@@ -37,7 +37,7 @@ export default function Hero() {
             </h1>
 
             <p className="text-muted text-lg mb-8 max-w-md mx-auto lg:mx-0 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-              Edición profesional que potencian la calidad de tu contenido y amplifican su alcance.
+              Edición profesional que potencia la calidad de tu contenido y amplifica su alcance.
             </p>
 
             <Link
