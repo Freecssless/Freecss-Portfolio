@@ -106,8 +106,8 @@ export default function Contact() {
                 <div className="flex justify-center mb-4">
                   <XIcon />
                 </div>
-                <h3 className="text-primary text-xl font-heading font-semibold mb-2">
-                  Contáctame
+                <h3 className="text-blue-600 text-xl font-heading font-semibold mb-2">
+                  Contáctame Por Twitter/X
                 </h3>
                 <p className="text-muted mb-6">@Freecss_less</p>
                 <Link
