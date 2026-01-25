@@ -6,23 +6,45 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Freecss Portfolio",
   description: "Editor Profesional de Videos - Convierte tus ideas en experiencias visuales",
+  openGraph: {
+    title: "Freecss Portfolio",
+    description: "Editor Profesional de Videos - Convierte tus ideas en experiencias visuales",
+    siteName: "Freecss Portfolio",
+    images: [
+      {
+        url: "https://i.postimg.cc/8kK3Pp4N/Portfolio-Preview.png",
+        width: 1280,
+        height: 720,
+        alt: "Freecss Portfolio Featured Video",
+      },
+    ],
+    locale: "es_ES",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Freecss Portfolio",
+    description: "Editor Profesional de Videos - Convierte tus ideas en experiencias visuales",
+    images: ["https://i.postimg.cc/8kK3Pp4N/Portfolio-Preview.png"],
+    creator: "@Freecss_less",
+  },
   icons: {
     icon: [
       {
-        url: "https://i.postimg.cc/KkMwCY9L/Grupo-3.png",
+        url: "https://i.postimg.cc/8kK3Pp4N/Portfolio-Preview.png",
         sizes: "192x192",
         type: "image/png",
       },
     ],
     apple: [
       {
-        url: "https://i.postimg.cc/KkMwCY9L/Grupo-3.png",
+        url: "https://i.postimg.cc/8kK3Pp4N/Portfolio-Preview.png",
         sizes: "180x180",
         type: "image/png",
       },
     ],
     shortcut: [
-      "https://i.postimg.cc/KkMwCY9L/Grupo-3.png",
+      "https://i.postimg.cc/8kK3Pp4N/Portfolio-Preview.png",
     ],
   },
 };
