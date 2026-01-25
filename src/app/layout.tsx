@@ -9,20 +9,20 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/58f269242651275.6971bf731e0e9.png",
+        url: "https://i.postimg.cc/KkMwCY9L/Grupo-3.png",
         sizes: "192x192",
         type: "image/png",
       },
     ],
     apple: [
       {
-        url: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/58f269242651275.6971bf731e0e9.png",
+        url: "https://i.postimg.cc/KkMwCY9L/Grupo-3.png",
         sizes: "180x180",
         type: "image/png",
       },
     ],
     shortcut: [
-      "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/58f269242651275.6971bf731e0e9.png",
+      "https://i.postimg.cc/KkMwCY9L/Grupo-3.png",
     ],
   },
 };
