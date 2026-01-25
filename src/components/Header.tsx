@@ -21,7 +21,7 @@ export default function Header() {
           <Link href="#home" className="flex items-center gap-3 group">
             <div className="relative">
               <img
-                src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/58f269242651275.6971bf731e0e9.png"
+                src="https://i.postimg.cc/KkMwCY9L/Grupo-3.png"
                 alt="Freecss"
                 className="w-10 h-10 rounded-full transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/30"
                 referrerPolicy="no-referrer"
