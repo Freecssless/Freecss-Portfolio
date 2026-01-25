@@ -60,7 +60,7 @@ export default function Hero() {
                   d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                 />
               </svg>
-              <span className="relative inline-block transition-transform duration-300 group-hover:translate-x-1">¡Trabajemos Juntos!</span>
+              ¡Trabajemos Juntos!
             </Link>
           </div>
 
