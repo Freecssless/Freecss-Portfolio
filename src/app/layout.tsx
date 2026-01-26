@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Freecss Portfolio",
     description: "Editor Profesional de Videos - Convierte tus ideas en experiencias visuales",
+    url: "https://freecss-portfolio.vercel.app",
     siteName: "Freecss Portfolio",
     images: [
       {
