@@ -16,7 +16,7 @@ const clients = [
   {
     name: "Freecss",
     subscribers: "51k",
-    image: "https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/05e74d8c757b492f31df6577aaf83174~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=b9e62073&x-expires=1769414400&x-signature=vl%2FRO1McBPQhOUtTrK3kmGE9BpY%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my",
+    image: "https://i.postimg.cc/xjRjTbG2/icon-tiktok.jpg",
   },
   {
     name: "Virion Mkt",
