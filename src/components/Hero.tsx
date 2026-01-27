@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Hero() {
   const handleVideoClick = () => {
-    window.open("https://www.youtube.com/watch?v=gJAx0bKkOS0&t=154s", "_blank");
+    window.open("https://youtu.be/m3_Hy70vh6M", "_blank");
   };
 
   return (
@@ -96,7 +96,7 @@ export default function Hero() {
                 className="relative aspect-video rounded-lg overflow-hidden group cursor-pointer w-full"
               >
                 <img
-                  src="https://i.ytimg.com/vi/gJAx0bKkOS0/maxresdefault.jpg"
+                  src="https://i.ytimg.com/vi_webp/m3_Hy70vh6M/maxresdefault.webp"
                   alt="Featured Video"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="lazy"
