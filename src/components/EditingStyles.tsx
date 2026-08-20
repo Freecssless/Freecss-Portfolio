@@ -23,9 +23,9 @@ const styles = [
   },
   {
     title: "Multicámaras",
-    image: "https://i.ytimg.com/vi/oRkTCvJBahs/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAeSe6MBRMMVhsg67_5pLIPBQGGCQ",
+    image: "https://i.ytimg.com/vi/hk271vCfzV0/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAal5ODKDSDaTdVPj0eq4dfkjfWIg",
     icon: "sparkle",
-    youtubeId: "oRkTCvJBahs&t=173s",
+    youtubeId: "hk271vCfzV0&t=49s",
   },
   {
     title: "Gameplay",
