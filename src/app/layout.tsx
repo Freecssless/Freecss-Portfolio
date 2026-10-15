@@ -42,10 +42,10 @@ export const metadata: Metadata = {
     siteName: "Freecss Portfolio",
     images: [
       {
-        url: "https://i.postimg.cc/8kK3Pp4N/Portfolio-Preview.png",
-        width: 1280,
-        height: 720,
-        alt: "Freecss Portfolio Featured Video",
+        url: "https://i.postimg.cc/3RQXVBN1/twitterbanner.png",
+        width: 1200,
+        height: 600,
+        alt: "Freecss — Editor de video: YouTube, Reels, Shorts y TikToks",
       },
     ],
     locale: "es_ES",
@@ -55,7 +55,14 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Freecss Portfolio",
     description: "Editor Profesional de Videos - Convierte tus ideas en experiencias visuales",
-    images: ["https://i.postimg.cc/8kK3Pp4N/Portfolio-Preview.png"],
+    images: [
+      {
+        url: "https://i.postimg.cc/3RQXVBN1/twitterbanner.png",
+        width: 1200,
+        height: 600,
+        alt: "Freecss — Editor de video: YouTube, Reels, Shorts y TikToks",
+      },
+    ],
     creator: "@Freecss_less",
   },
   icons: {
