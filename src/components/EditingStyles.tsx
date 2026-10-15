@@ -3,42 +3,64 @@
 import type { CSSProperties } from "react";
 import SectionHeader from "./ui/SectionHeader";
 
-const styles = [
-  {
-    title: "Estilo Profesional",
-    image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/4fda97242651275.69712890d4586.png",
-    icon: "sparkle",
-    youtubeId: "f5Bv3_TPpSc",
-  },
+type Clip = {
+  title: string;
+  image: string;
+  icon: "sparkle" | "star";
+  url: string;
+};
+
+/** Horizontal works (16:9) */
+const videos: Clip[] = [
   {
     title: "VideoClip",
     image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/d1a64b242651275.69717df7e611c.png",
     icon: "star",
-    youtubeId: "JmMqOYj1YF0",
-  },
-  {
-    title: "Publicitario",
-    image: "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/6820d2242651275.69717f44669b6.png",
-    icon: "sparkle",
-    youtubeId: "AHLOsxiFKDs",
-  },
-  {
-    title: "Multicámaras",
-    image: "https://i.ytimg.com/vi/hk271vCfzV0/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAal5ODKDSDaTdVPj0eq4dfkjfWIg",
-    icon: "sparkle",
-    youtubeId: "hk271vCfzV0&t=49s",
+    url: "https://www.youtube.com/watch?v=JmMqOYj1YF0",
   },
   {
     title: "Gameplay",
     image: "https://i.ytimg.com/vi/GtblTk1tbf0/maxresdefault.jpg",
     icon: "sparkle",
-    youtubeId: "GtblTk1tbf0&t=23s",
+    url: "https://www.youtube.com/watch?v=GtblTk1tbf0&t=23s",
   },
   {
     title: "Cortometraje",
     image: "https://mir-s3-cdn-cf.behance.net/project_modules/fs/484efb242651275.6971bb9069bf7.png",
     icon: "star",
-    youtubeId: "QsgQXYQCAl0",
+    url: "https://www.youtube.com/watch?v=QsgQXYQCAl0",
+  },
+];
+
+/**
+ * Vertical reels (9:16). YouTube only exposes a 16:9 thumbnail for these
+ * Shorts, with the vertical frame centred, so `object-cover` in a 9:16 box
+ * crops it exactly to the reel.
+ */
+const reels: Clip[] = [
+  {
+    title: "Dinámico",
+    image: "https://i.ytimg.com/vi/XrAw-_MY5U4/maxresdefault.jpg",
+    icon: "sparkle",
+    url: "https://www.youtube.com/shorts/XrAw-_MY5U4",
+  },
+  {
+    title: "Publicitario",
+    image: "https://i.ytimg.com/vi/LcxERrdWz9I/maxresdefault.jpg",
+    icon: "sparkle",
+    url: "https://www.youtube.com/shorts/LcxERrdWz9I",
+  },
+  {
+    title: "Event Recap",
+    image: "https://i.ytimg.com/vi/BuugEYaQ0jY/maxresdefault.jpg",
+    icon: "star",
+    url: "https://www.youtube.com/shorts/BuugEYaQ0jY",
+  },
+  {
+    title: "Gameplay Shorts",
+    image: "https://i.ytimg.com/vi/kzjj98b8WAs/maxresdefault.jpg",
+    icon: "sparkle",
+    url: "https://www.youtube.com/shorts/kzjj98b8WAs",
   },
 ];
 
@@ -102,89 +124,143 @@ function Waveform({ seed }: { seed: number }) {
   );
 }
 
-export default function EditingStyles() {
-  const handleCardClick = (youtubeId: string) => {
-    window.open(`https://www.youtube.com/watch?v=${youtubeId}`, "_blank");
-  };
+/** Timeline-clip card, horizontal (16:9) or vertical reel (9:16). */
+function ClipCard({ clip, index, vertical = false }: { clip: Clip; index: number; vertical?: boolean }) {
+  const tag = `${vertical ? "Reel" : "Clip"}_${String(index + 1).padStart(2, "0")}`;
+  return (
+    <button
+      type="button"
+      onClick={() => window.open(clip.url, "_blank", "noopener,noreferrer")}
+      data-tilt={vertical ? "7" : "5"}
+      className="spot group panel flex h-full w-full flex-col overflow-hidden p-0 text-left hover:border-accent/50 hover:shadow-[0_30px_60px_-30px_rgba(143,140,255,0.55)]"
+      aria-label={`${clip.title} — ver en YouTube`}
+    >
+      {/* Thumbnail */}
+      <div
+        className={`wipe frame-marks relative w-full overflow-hidden bg-panel-3 ${
+          vertical ? "aspect-[9/16]" : "aspect-video"
+        }`}
+      >
+        <img
+          src={clip.image}
+          alt={clip.title}
+          width={vertical ? 405 : 1200}
+          height={vertical ? 720 : 675}
+          className="h-full w-full object-cover transition-[transform,filter] duration-700 ease-out group-hover:scale-[1.05] group-hover:brightness-[0.8]"
+          loading="lazy"
+          decoding="async"
+          referrerPolicy="no-referrer"
+        />
+        {vertical && (
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/25" />
+        )}
+        <span className="absolute left-2.5 top-2.5 z-[4] rounded-sm bg-black/60 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-white/85 backdrop-blur">
+          {tag}
+        </span>
+        {vertical && (
+          <span className="absolute right-2.5 top-2.5 z-[4] rounded-sm border border-white/20 bg-black/50 px-1.5 py-0.5 font-mono text-[10px] text-white/80 backdrop-blur">
+            9:16
+          </span>
+        )}
 
+        {/* Play */}
+        <span className="absolute inset-0 z-[4] flex items-center justify-center">
+          <span className="flex h-12 w-12 scale-75 items-center justify-center rounded-full bg-accent text-background opacity-0 shadow-[0_10px_30px_-8px_rgba(143,140,255,0.8)] transition-all duration-500 ease-out group-hover:scale-100 group-hover:opacity-100">
+            <svg className="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.69L9.54 5.98C8.87 5.55 8 6.03 8 6.82z" />
+            </svg>
+          </span>
+        </span>
+
+        {/* YouTube badge */}
+        <span className="absolute bottom-2.5 right-2.5 z-[4] flex translate-y-1 items-center gap-1 rounded-sm bg-black/70 px-2 py-1 text-[10px] font-medium text-white opacity-0 backdrop-blur transition-all duration-500 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+          <svg className="h-3 w-3 text-rec" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+          </svg>
+          {vertical ? "Shorts" : "Ver en YouTube"}
+        </span>
+      </div>
+
+      {/* Clip label bar */}
+      <div
+        className={`flex flex-grow items-center border-t border-line pb-2 pt-3.5 ${
+          vertical ? "gap-2 px-3 sm:gap-3 sm:px-4" : "gap-3 px-4"
+        }`}
+      >
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-line-2 bg-panel-3 text-accent transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-background">
+          {clip.icon === "sparkle" ? <SparkleIcon /> : <StarIcon />}
+        </span>
+        <h3
+          className={`min-w-0 font-heading font-medium text-foreground transition-colors duration-300 group-hover:text-accent-soft ${
+            // reels are narrow: let the title wrap to two lines instead of cutting it
+            vertical ? "line-clamp-2 break-words text-sm leading-tight sm:text-base" : "truncate text-base sm:text-lg"
+          }`}
+        >
+          {clip.title}
+        </h3>
+        <svg
+          className={`ml-auto h-4 w-4 shrink-0 -translate-x-1 text-muted opacity-0 transition-all duration-500 ease-out group-hover:translate-x-0 group-hover:text-accent group-hover:opacity-100 ${
+            vertical ? "hidden xl:block" : ""
+          }`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </div>
+
+      {/* Audio track strip */}
+      <div className={`h-6 pb-3 ${vertical ? "px-3 sm:px-4" : "px-4"}`}>
+        <Waveform seed={index + (vertical ? 11 : 1)} />
+      </div>
+    </button>
+  );
+}
+
+export default function EditingStyles() {
   return (
     <section id="videos" data-scene="2" className="relative px-4 py-20 sm:px-6 md:py-28 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <SectionHeader index="02" label="Trabajos" title="Estilos de Edición" />
 
+        {/* 16:9 works — on tablets the 3rd card sits centred on its own row */}
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
-          {styles.map((style, index) => (
+          {videos.map((clip, index) => (
             <div
-              key={`style-${style.title}-${index}`}
+              key={`video-${clip.title}`}
               data-reveal="card"
               style={{ "--d": `${(index % 3) * 120}ms` } as CSSProperties}
+              className="sm:last:col-span-2 sm:last:mx-auto sm:last:w-[calc(50%-10px)] lg:last:col-span-1 lg:last:w-auto"
             >
-              <button
-                type="button"
-                onClick={() => handleCardClick(style.youtubeId)}
-                data-tilt="5"
-                className="spot group panel flex h-full w-full flex-col overflow-hidden p-0 text-left hover:border-accent/50 hover:shadow-[0_30px_60px_-30px_rgba(143,140,255,0.55)]"
-                aria-label={`${style.title} — ver en YouTube`}
-              >
-                {/* Thumbnail */}
-                <div className="wipe frame-marks relative aspect-video w-full overflow-hidden bg-panel-3">
-                  <img
-                    src={style.image}
-                    alt={style.title}
-                    width={1200}
-                    height={675}
-                    className="h-full w-full object-cover transition-[transform,filter] duration-700 ease-out group-hover:scale-[1.05] group-hover:brightness-[0.8]"
-                    loading="lazy"
-                    decoding="async"
-                    referrerPolicy="no-referrer"
-                  />
-                  <span className="absolute left-2.5 top-2.5 z-[4] rounded-sm bg-black/60 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-white/85 backdrop-blur">
-                    Clip_{String(index + 1).padStart(2, "0")}
-                  </span>
-
-                  {/* Play */}
-                  <span className="absolute inset-0 z-[4] flex items-center justify-center">
-                    <span className="flex h-12 w-12 scale-75 items-center justify-center rounded-full bg-accent text-background opacity-0 shadow-[0_10px_30px_-8px_rgba(143,140,255,0.8)] transition-all duration-500 ease-out group-hover:scale-100 group-hover:opacity-100">
-                      <svg className="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.69L9.54 5.98C8.87 5.55 8 6.03 8 6.82z" />
-                      </svg>
-                    </span>
-                  </span>
-
-                  {/* YouTube badge */}
-                  <span className="absolute bottom-2.5 right-2.5 z-[4] flex translate-y-1 items-center gap-1 rounded-sm bg-black/70 px-2 py-1 text-[10px] font-medium text-white opacity-0 backdrop-blur transition-all duration-500 ease-out group-hover:translate-y-0 group-hover:opacity-100">
-                    <svg className="h-3 w-3 text-rec" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                    </svg>
-                    Ver en YouTube
-                  </span>
-                </div>
-
-                {/* Clip label bar */}
-                <div className="flex flex-grow items-center gap-3 border-t border-line px-4 pb-2 pt-3.5">
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-line-2 bg-panel-3 text-accent transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-background">
-                    {style.icon === "sparkle" ? <SparkleIcon /> : <StarIcon />}
-                  </span>
-                  <h3 className="font-heading text-base font-medium text-foreground transition-colors duration-300 group-hover:text-accent-soft sm:text-lg">
-                    {style.title}
-                  </h3>
-                  <svg
-                    className="ml-auto h-4 w-4 shrink-0 -translate-x-1 text-muted opacity-0 transition-all duration-500 ease-out group-hover:translate-x-0 group-hover:text-accent group-hover:opacity-100"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </div>
-
-                {/* Audio track strip */}
-                <div className="h-6 px-4 pb-3">
-                  <Waveform seed={index + 1} />
-                </div>
-              </button>
+              <ClipCard clip={clip} index={index} />
             </div>
           ))}
+        </div>
+
+        {/* 9:16 reels */}
+        <div className="mt-14 md:mt-20">
+          <div data-reveal data-ascii-mask className="mb-6 flex items-center gap-4">
+            <span className="mono-label flex shrink-0 items-center gap-2">
+              <span className="text-accent">[9:16]</span>
+              <span className="text-foreground/80">Reels</span>
+            </span>
+            <span className="ruler hidden flex-1 opacity-70 sm:block" />
+          </div>
+
+          {/* phones and small tablets: 2 per row; from 768px: all 4 in a row */}
+          <div className="mx-auto flex max-w-5xl flex-wrap justify-center gap-3 sm:gap-5">
+            {reels.map((clip, index) => (
+              <div
+                key={`reel-${clip.title}`}
+                data-reveal="card"
+                style={{ "--d": `${index * 120}ms` } as CSSProperties}
+                className="w-[calc(50%-7px)] sm:w-[calc(50%-11px)] md:w-[calc((100%-60px)/4-1px)]"
+              >
+                <ClipCard clip={clip} index={index} vertical />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

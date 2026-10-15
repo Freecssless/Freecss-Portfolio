@@ -9,18 +9,19 @@ const clients = [
   },
   {
     name: "AradirOff",
-    subscribers: "2,3 Millones",
+    subscribers: "2,4 Millones",
     image: "https://yt3.googleusercontent.com/sv9i_OP0uL2wvUJfCbgaivEhWSnnZl6uV23xkPxMVqxANnpBR5ej3MrSEFG9uZuZxV-E__Md=s900-c-k-c0x00ffffff-no-rj",
-  },
-  {
-    name: "Freecss",
-    subscribers: "51k",
-    image: "https://i.postimg.cc/xjRjTbG2/icon-tiktok.jpg",
   },
   {
     name: "Virion Mkt",
     subscribers: "Empresa",
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROVbd0MhkUze_VEWrbU_d52TOwVoN1JbfDqA&s",
+  },
+  {
+    name: "Komori",
+    subscribers: "Empresa",
+    // served from /public: the original Facebook CDN link is signed and expires
+    image: "/clients/komori.jpg",
   },
 ];
 
@@ -40,13 +41,14 @@ export default function Clients() {
         />
 
         {/* Project bin */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+        {/* Centered wrapping rows: 2 per row on phones and tablets, all 4 in one row on desktop */}
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-5">
           {clients.map((client, index) => (
             <div
               key={`client-${client.name}-${index}`}
               data-reveal="card"
               style={{ "--d": `${index * 110}ms` } as CSSProperties}
-              className="group"
+              className="group w-[calc(50%-7px)] sm:w-[calc(50%-11px)] lg:w-[calc((100%-60px)/4-1px)]"
             >
               <div
                 data-tilt="8"
