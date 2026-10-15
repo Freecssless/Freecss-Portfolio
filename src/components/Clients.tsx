@@ -1,6 +1,5 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
+import SectionHeader from "./ui/SectionHeader";
 
 const clients = [
   {
@@ -26,106 +25,64 @@ const clients = [
 ];
 
 export default function Clients() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <section
-      ref={sectionRef}
       id="testimonials"
-      className="py-6 px-4 sm:px-6 lg:px-8 bg-gradient-section"
+      data-scene="1"
+      className="relative px-4 py-20 sm:px-6 md:py-28 lg:px-8"
     >
-      <div className="max-w-6xl mx-auto">
-        {/* Section Header */}
-        <div className={`text-center mb-12 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-          <div className="section-divider" />
-          <h2 className="section-title font-heading">Mis Clientes</h2>
-          <p className="text-muted max-w-2xl mx-auto">
-            Conoce mi trayectoria como editor de video. Me enorgullece impulsar a mis clientes a alcanzar sus objetivos y superar sus expectativas.
-          </p>
-        </div>
+      <div className="mx-auto max-w-6xl">
+        <SectionHeader
+          index="01"
+          label="Clientes"
+          title="Mis Clientes"
+          description="Conoce mi trayectoria como editor de video. Me enorgullece impulsar a mis clientes a alcanzar sus objetivos y superar sus expectativas."
+        />
 
-        {/* Clients Grid - 5 columns on first row, 2 centered on second row */}
-        <div className="flex flex-col items-center gap-8">
-          {/* First Row - 5 clients */}
-          <div className="flex flex-wrap justify-center gap-6 lg:gap-8">
-            {clients.slice(0, 5).map((client, index) => (
+        {/* Project bin */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+          {clients.map((client, index) => (
+            <div
+              key={`client-${client.name}-${index}`}
+              data-reveal="card"
+              style={{ "--d": `${index * 110}ms` } as CSSProperties}
+              className="group"
+            >
               <div
-                key={`client-${client.name}-${index}`}
-                className={`flex flex-col items-center group cursor-pointer ${isVisible ? 'animate-fade-in-up' : 'opacity-0'} w-36 sm:w-44`}
-                style={{ animationDelay: `${0.1 + index * 0.1}s` }}
+                data-tilt="8"
+                className="spot panel h-full p-2 hover:border-accent/50 hover:shadow-[0_30px_60px_-30px_rgba(143,140,255,0.6)] sm:p-2.5"
               >
-                <div className="relative w-full aspect-square rounded-3xl overflow-hidden bg-card border border-white/10 shadow-lg transition-all duration-300 group-hover:shadow-primary/20 group-hover:border-primary/30 group-hover:-translate-y-1">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
+                <div className="wipe frame-marks relative aspect-square overflow-hidden rounded-md bg-panel-3">
                   <img
                     src={client.image}
                     alt={client.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    width={400}
+                    height={400}
+                    className="h-full w-full object-cover grayscale-[35%] transition-[transform,filter] duration-700 ease-out group-hover:scale-[1.06] group-hover:grayscale-0"
                     loading="lazy"
+                    decoding="async"
                     referrerPolicy="no-referrer"
                   />
-                  
-                  {/* Content overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 p-3 z-20 flex flex-col items-center text-center">
-                    <h3 className="font-heading font-bold text-sm text-white mb-0.5 group-hover:text-primary transition-colors duration-300 line-clamp-1 w-full">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <span className="absolute left-2 top-2 z-[4] rounded-sm bg-black/60 px-1.5 py-0.5 font-mono text-[10px] text-white/80 backdrop-blur">
+                    0{index + 1}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 px-1 pb-1 pt-3">
+                  <div className="min-w-0">
+                    <h3 className="truncate font-heading text-[0.95rem] font-semibold text-foreground transition-colors duration-300 group-hover:text-accent-soft sm:text-base">
                       {client.name}
                     </h3>
-                    <div className="px-2 py-0.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-[10px] text-white/90 font-medium">
+                    <p className="truncate font-mono text-[10px] uppercase tracking-[0.12em] text-muted sm:text-[11px]">
                       {client.subscribers}
-                    </div>
+                    </p>
                   </div>
+                  <span className="dot shrink-0 bg-line-2 transition-colors duration-300 group-hover:bg-accent" />
                 </div>
               </div>
-            ))}
-          </div>
-          {/* Second Row - 2 clients centered */}
-          <div className="flex flex-wrap justify-center gap-6 lg:gap-8">
-            {clients.slice(5).map((client, index) => (
-              <div
-                key={`client-${client.name}-${index}`}
-                className={`flex flex-col items-center group cursor-pointer ${isVisible ? 'animate-fade-in-up' : 'opacity-0'} w-36 sm:w-44`}
-                style={{ animationDelay: `${0.6 + index * 0.1}s` }}
-              >
-                <div className="relative w-full aspect-square rounded-3xl overflow-hidden bg-card border border-white/10 shadow-lg transition-all duration-300 group-hover:shadow-primary/20 group-hover:border-primary/30 group-hover:-translate-y-1">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
-                  <img
-                    src={client.image}
-                    alt={client.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    loading="lazy"
-                    referrerPolicy="no-referrer"
-                  />
-                  
-                  {/* Content overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 p-3 z-20 flex flex-col items-center text-center">
-                    <h3 className="font-heading font-bold text-sm text-white mb-0.5 group-hover:text-primary transition-colors duration-300 line-clamp-1 w-full">
-                      {client.name}
-                    </h3>
-                    <div className="px-2 py-0.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-[10px] text-white/90 font-medium">
-                      {client.subscribers}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

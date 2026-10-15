@@ -10,32 +10,46 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        heading: ['Space Grotesk', 'sans-serif'],
+        sans: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
+        heading: ["var(--font-heading)", "Space Grotesk", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "Menlo", "Consolas", "monospace"],
       },
       colors: {
-        background: '#0b0c1d',
-        foreground: '#ffffff',
+        background: "#09090b",
+        foreground: "#ececef",
+        panel: {
+          DEFAULT: "#111114",
+          2: "#17171b",
+          3: "#1e1e23",
+        },
+        line: {
+          DEFAULT: "#232328",
+          2: "#303037",
+        },
+        muted: "#8b8b95",
+        dim: "#5a5a63",
+        accent: {
+          DEFAULT: "#8f8cff",
+          soft: "#b4b2ff",
+          deep: "#5f5bd6",
+        },
+        rec: "#ff5a5a",
+        // Alias kept so any leftover `primary` utility still matches the new palette
         primary: {
-          DEFAULT: '#36a9a1',
-          light: '#4ecdc4',
-          dark: '#2d8f88',
+          DEFAULT: "#8f8cff",
+          light: "#b4b2ff",
+          dark: "#5f5bd6",
         },
-        secondary: {
-          DEFAULT: '#5068c8',
-          light: '#6b7fd4',
-        },
-        card: {
-          DEFAULT: '#0f1225',
-          border: '#1a1f3c',
-        },
-        muted: '#8b8fa8',
-        border: '#1a1f3c',
+        border: "#232328",
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: "10px",
+        md: "7px",
+        sm: "4px",
+      },
+      transitionTimingFunction: {
+        out: "cubic-bezier(0.16, 1, 0.3, 1)",
+        "in-out": "cubic-bezier(0.65, 0, 0.35, 1)",
       },
     },
   },

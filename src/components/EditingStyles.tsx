@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
+import SectionHeader from "./ui/SectionHeader";
 
 const styles = [
   {
@@ -44,7 +45,7 @@ const styles = [
 function SparkleIcon() {
   return (
     <svg
-      className="w-4 h-4 text-primary transition-transform duration-300 group-hover:rotate-45 group-hover:scale-125"
+      className="h-3.5 w-3.5 transition-transform duration-500 ease-out group-hover:rotate-45 group-hover:scale-110"
       viewBox="0 0 24 24"
       fill="currentColor"
     >
@@ -56,7 +57,7 @@ function SparkleIcon() {
 function StarIcon() {
   return (
     <svg
-      className="w-4 h-4 text-primary transition-transform duration-300 group-hover:rotate-12 group-hover:scale-125"
+      className="h-3.5 w-3.5 transition-transform duration-500 ease-out group-hover:rotate-12 group-hover:scale-110"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -67,104 +68,122 @@ function StarIcon() {
   );
 }
 
+/** Deterministic audio-waveform strip so every clip looks like a timeline clip (SSR safe). */
+function Waveform({ seed }: { seed: number }) {
+  const bars = 64;
+  const heights = Array.from({ length: bars }, (_, i) => {
+    const x = i / bars;
+    const h =
+      Math.abs(Math.sin(i * 0.55 + seed * 1.7) * 0.55 + Math.sin(i * 0.17 + seed) * 0.35) *
+      (0.55 + 0.45 * Math.sin(Math.PI * x));
+    // rounded so server and client markup match exactly
+    return Math.round(Math.max(0.08, Math.min(1, h)) * 100) / 100;
+  });
+  return (
+    <svg
+      className="wave h-full w-full text-line-2 transition-colors duration-500 group-hover:text-accent/70"
+      viewBox={`0 0 ${bars * 3} 20`}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      {heights.map((h, i) => (
+        <rect
+          key={`w-${seed}-${i}`}
+          x={i * 3}
+          y={(10 - h * 9).toFixed(2)}
+          width={1.6}
+          height={(h * 18).toFixed(2)}
+          rx={0.6}
+          fill="currentColor"
+          style={{ "--i": i } as CSSProperties}
+        />
+      ))}
+    </svg>
+  );
+}
+
 export default function EditingStyles() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
   const handleCardClick = (youtubeId: string) => {
     window.open(`https://www.youtube.com/watch?v=${youtubeId}`, "_blank");
   };
 
   return (
-    <section
-      ref={sectionRef}
-      id="videos"
-      className="py-6 px-4 sm:px-6 lg:px-8 bg-gradient-section"
-    >
-      <div className="max-w-6xl mx-auto">
-        {/* Section Header */}
-        <div className={`text-center mb-12 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-          <div className="section-divider" />
-          <h2 className="section-title font-heading">Estilos de Edición</h2>
-        </div>
+    <section id="videos" data-scene="2" className="relative px-4 py-20 sm:px-6 md:py-28 lg:px-8">
+      <div className="mx-auto max-w-6xl">
+        <SectionHeader index="02" label="Trabajos" title="Estilos de Edición" />
 
-        {/* Styles Grid */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
           {styles.map((style, index) => (
-            <button
-              type="button"
+            <div
               key={`style-${style.title}-${index}`}
-              onClick={() => handleCardClick(style.youtubeId)}
-              className={`video-card card group cursor-pointer text-left flex flex-col h-full ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
-              style={{ animationDelay: `${0.1 + index * 0.1}s` }}
+              data-reveal="card"
+              style={{ "--d": `${(index % 3) * 120}ms` } as CSSProperties}
             >
-              {/* Thumbnail Container - Moved to top for MD3 style */}
-              <div className="relative w-full aspect-video overflow-hidden">
-                <img
-                  src={style.image}
-                  alt={style.title}
-                  className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105 group-hover:brightness-90"
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
-                />
-                {/* Play button overlay */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/20">
-                  <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform duration-300 shadow-lg hover:bg-white/20">
-                    <svg
-                      className="w-6 h-6 ml-1"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.69L9.54 5.98C8.87 5.55 8 6.03 8 6.82z" />
-                    </svg>
-                  </div>
-                </div>
-                {/* YouTube badge */}
-                <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2 py-1 rounded-md flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <svg className="w-3 h-3 text-red-500" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                  </svg>
-                  Ver en YouTube
-                </div>
-              </div>
+              <button
+                type="button"
+                onClick={() => handleCardClick(style.youtubeId)}
+                data-tilt="5"
+                className="spot group panel flex h-full w-full flex-col overflow-hidden p-0 text-left hover:border-accent/50 hover:shadow-[0_30px_60px_-30px_rgba(143,140,255,0.55)]"
+                aria-label={`${style.title} — ver en YouTube`}
+              >
+                {/* Thumbnail */}
+                <div className="wipe frame-marks relative aspect-video w-full overflow-hidden bg-panel-3">
+                  <img
+                    src={style.image}
+                    alt={style.title}
+                    width={1200}
+                    height={675}
+                    className="h-full w-full object-cover transition-[transform,filter] duration-700 ease-out group-hover:scale-[1.05] group-hover:brightness-[0.8]"
+                    loading="lazy"
+                    decoding="async"
+                    referrerPolicy="no-referrer"
+                  />
+                  <span className="absolute left-2.5 top-2.5 z-[4] rounded-sm bg-black/60 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-white/85 backdrop-blur">
+                    Clip_{String(index + 1).padStart(2, "0")}
+                  </span>
 
-              {/* Content */}
-              <div className="p-5 flex items-center gap-3 flex-grow bg-card-bg/50">
-                <div className="p-2 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                   {style.icon === "sparkle" ? <SparkleIcon /> : <StarIcon />}
+                  {/* Play */}
+                  <span className="absolute inset-0 z-[4] flex items-center justify-center">
+                    <span className="flex h-12 w-12 scale-75 items-center justify-center rounded-full bg-accent text-background opacity-0 shadow-[0_10px_30px_-8px_rgba(143,140,255,0.8)] transition-all duration-500 ease-out group-hover:scale-100 group-hover:opacity-100">
+                      <svg className="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.69L9.54 5.98C8.87 5.55 8 6.03 8 6.82z" />
+                      </svg>
+                    </span>
+                  </span>
+
+                  {/* YouTube badge */}
+                  <span className="absolute bottom-2.5 right-2.5 z-[4] flex translate-y-1 items-center gap-1 rounded-sm bg-black/70 px-2 py-1 text-[10px] font-medium text-white opacity-0 backdrop-blur transition-all duration-500 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+                    <svg className="h-3 w-3 text-rec" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                    </svg>
+                    Ver en YouTube
+                  </span>
                 </div>
-                <h3 className="text-lg font-medium text-foreground group-hover:text-primary transition-colors duration-300">
-                  {style.title}
-                </h3>
-                
-                {/* External link icon */}
-                <svg
-                  className="w-5 h-5 text-muted ml-auto opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </div>
-            </button>
+
+                {/* Clip label bar */}
+                <div className="flex flex-grow items-center gap-3 border-t border-line px-4 pb-2 pt-3.5">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-line-2 bg-panel-3 text-accent transition-colors duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-background">
+                    {style.icon === "sparkle" ? <SparkleIcon /> : <StarIcon />}
+                  </span>
+                  <h3 className="font-heading text-base font-medium text-foreground transition-colors duration-300 group-hover:text-accent-soft sm:text-lg">
+                    {style.title}
+                  </h3>
+                  <svg
+                    className="ml-auto h-4 w-4 shrink-0 -translate-x-1 text-muted opacity-0 transition-all duration-500 ease-out group-hover:translate-x-0 group-hover:text-accent group-hover:opacity-100"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </div>
+
+                {/* Audio track strip */}
+                <div className="h-6 px-4 pb-3">
+                  <Waveform seed={index + 1} />
+                </div>
+              </button>
+            </div>
           ))}
         </div>
       </div>

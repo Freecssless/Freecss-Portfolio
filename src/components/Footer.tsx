@@ -1,4 +1,6 @@
 import Link from "next/link";
+import BackToTop from "./BackToTop";
+import Roll from "./ui/Roll";
 
 const quickLinks = [
   { href: "#home", label: "Inicio" },
@@ -14,56 +16,66 @@ const services = [
   { href: "#videos", label: "Multicamáras" },
 ];
 
-function ArrowIcon() {
+function LinkList({ title, links }: { title: string; links: { href: string; label: string }[] }) {
   return (
-    <svg
-      className="w-3 h-3 text-primary transition-transform duration-300 group-hover:translate-x-1"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M9 5l7 7-7 7"
-      />
-    </svg>
+    <div>
+      <h4 className="mono-label mb-5 text-foreground/70">{title}</h4>
+      <ul className="space-y-3">
+        {links.map((link) => (
+          <li key={link.label}>
+            <Link
+              href={link.href}
+              className="group inline-flex items-center gap-2 text-sm text-muted transition-colors duration-300 hover:text-foreground"
+            >
+              <span className="font-mono text-[11px] text-dim transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-accent">
+                →
+              </span>
+              <span className="roll-target">
+                <Roll>{link.label}</Roll>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
 export default function Footer() {
   return (
-    <footer className="bg-background border-t border-card-border py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-3 gap-10 mb-10">
-          {/* Logo & Social */}
-          <div>
-            <Link href="#home" className="flex items-center gap-3 mb-4 group">
-              <div className="relative">
+    <footer data-scene="4" className="relative border-t border-line bg-background/85 px-4 pt-14 backdrop-blur-sm sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid gap-10 pb-12 sm:grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr]">
+          {/* Logo & social */}
+          <div className="sm:col-span-2 md:col-span-1">
+            <Link href="#home" className="group mb-5 inline-flex items-center gap-3">
+              <span className="block h-9 w-9 overflow-hidden rounded-md ring-1 ring-line-2 transition-[box-shadow] duration-300 group-hover:ring-accent">
                 <img
                   src="https://i.postimg.cc/ppz8yMSJ/icon-web-freecss.png"
                   alt="Freecss"
-                  className="w-10 h-10 rounded-full transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/30"
+                  width={36}
+                  height={36}
+                  className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                  loading="lazy"
+                  decoding="async"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute inset-0 rounded-full bg-primary/20 scale-0 group-hover:scale-100 transition-transform duration-300" />
-              </div>
-              <span className="text-primary font-heading font-semibold text-lg transition-all duration-300 group-hover:tracking-wider">
-                Freecss!
+              </span>
+              <span className="font-heading text-lg font-semibold text-foreground">
+                Freecss<span className="text-accent">!</span>
               </span>
             </Link>
 
-            {/* Social Icons */}
             <div className="flex gap-3">
               <Link
                 href="https://twitter.com/Freecss_less"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-card border border-card-border flex items-center justify-center hover:border-primary hover:bg-primary/10 hover:scale-110 transition-all duration-300 group"
+                aria-label="Twitter"
+                className="group flex h-10 w-10 items-center justify-center rounded-md border border-line-2 bg-panel transition-all duration-300 hover:-translate-y-0.5 hover:border-accent hover:bg-accent/10"
               >
                 <svg
-                  className="w-5 h-5 text-muted group-hover:text-primary transition-colors duration-300"
+                  className="h-[18px] w-[18px] text-muted transition-colors duration-300 group-hover:text-accent"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -73,88 +85,23 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-primary font-heading font-semibold mb-4">
-              Enlaces Rápidos
-            </h4>
-            <ul className="space-y-2">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="flex items-center gap-2 text-muted hover:text-primary transition-all duration-300 group hover:translate-x-1"
-                  >
-                    <ArrowIcon />
-                    <span className="relative">
-                      {link.label}
-                      <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h4 className="text-primary font-heading font-semibold mb-4">
-              Servicios
-            </h4>
-            <ul className="space-y-2">
-              {services.map((service) => (
-                <li key={service.label}>
-                  <Link
-                    href={service.href}
-                    {...(service.href.startsWith("http")
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
-                    className="flex items-center gap-2 text-muted hover:text-primary transition-all duration-300 group hover:translate-x-1"
-                  >
-                    <ArrowIcon />
-                    <span className="relative">
-                      {service.label}
-                      <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
-                    </span>
-                    {service.href.startsWith("http") && (
-                      <svg className="w-3 h-3 text-primary/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <LinkList title="Enlaces Rápidos" links={quickLinks} />
+          <LinkList title="Servicios" links={services} />
         </div>
+      </div>
 
-        {/* Copyright */}
-        <div className="border-t border-card-border pt-6 text-center">
-          <p className="text-muted text-sm">
-            © 2026 Freecss. Todos los derechos reservados.
+      {/* Status bar */}
+      <div className="-mx-4 border-t border-line sm:-mx-6 lg:-mx-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-4 font-mono text-[11px] text-dim sm:flex-row sm:px-6 lg:px-8">
+          <p>© 2026 Freecss. Todos los derechos reservados.</p>
+          <p className="flex items-center gap-2 uppercase tracking-[0.14em]">
+            <span className="dot" />
+            Freecss_Portfolio.prproj
           </p>
         </div>
       </div>
 
-      {/* Back to top button */}
-      <Link
-        href="#home"
-        className="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-primary flex items-center justify-center hover:bg-primary-light hover:scale-110 hover:shadow-xl hover:shadow-primary/40 transition-all duration-300 z-50 group"
-      >
-        <svg
-          className="w-6 h-6 text-white transition-transform duration-300 group-hover:-translate-y-1"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5 10l7-7m0 0l7 7m-7-7v18"
-          />
-        </svg>
-      </Link>
+      <BackToTop />
     </footer>
   );
 }
