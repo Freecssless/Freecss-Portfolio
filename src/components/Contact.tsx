@@ -28,8 +28,8 @@ const channels = [
   {
     tag: "Email",
     title: "Contáctame Por Email",
-    value: "gaelaminadad@gmail.com",
-    href: "mailto:gaelaminadad@gmail.com",
+    value: "gaelamicv@gmail.com",
+    href: "mailto:gaelamicv@gmail.com",
     external: false,
     Icon: MailIcon,
     button: "btn-primary",

@@ -20,9 +20,9 @@ const videos: Clip[] = [
   },
   {
     title: "Gameplay",
-    image: "https://i.ytimg.com/vi/GtblTk1tbf0/maxresdefault.jpg",
+    image: "https://i.ytimg.com/vi/gHYQJyVUzPU/maxresdefault.jpg",
     icon: "sparkle",
-    url: "https://www.youtube.com/watch?v=GtblTk1tbf0&t=23s",
+    url: "https://www.youtube.com/watch?v=gHYQJyVUzPU",
   },
   {
     title: "Cortometraje",

@@ -8,9 +8,9 @@ const clients = [
     image: "https://i.scdn.co/image/ab67616100005174458eaf37b37d44be943e040f",
   },
   {
-    name: "AradirOff",
-    subscribers: "2,4 Millones",
-    image: "https://yt3.googleusercontent.com/sv9i_OP0uL2wvUJfCbgaivEhWSnnZl6uV23xkPxMVqxANnpBR5ej3MrSEFG9uZuZxV-E__Md=s900-c-k-c0x00ffffff-no-rj",
+    name: "Frizzy26",
+    subscribers: "36k",
+    image: "https://yt3.googleusercontent.com/YKNFvzIMqqtZ0FQiqNK-0gxvH-fLAS_IvZtrzZz6UM4HAA3VP8O_bnP4LDCdalJR5KBX16s9Fg=s400-c-k-c0x00ffffff-no-rj",
   },
   {
     name: "Virion Mkt",

@@ -31,7 +31,7 @@ export default function Hero() {
   const monitorOpacity = useTransform(scrollYProgress, [0.2, 0.95], [1, 0]);
 
   const handleVideoClick = () => {
-    window.open("https://youtu.be/m3_Hy70vh6M", "_blank");
+    window.open("https://youtu.be/ck3W68KUsyg", "_blank");
   };
 
   return (
@@ -139,7 +139,7 @@ export default function Hero() {
                 >
                   <div className="wipe frame-marks absolute inset-0">
                     <img
-                      src="https://i.ytimg.com/vi_webp/m3_Hy70vh6M/maxresdefault.webp"
+                      src="https://i.ytimg.com/vi_webp/ck3W68KUsyg/maxresdefault.webp"
                       alt="Featured Video"
                       width={1280}
                       height={720}

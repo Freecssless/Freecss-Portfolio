@@ -21,8 +21,8 @@ export default function Testimonial() {
             <div className="flex flex-col items-center text-center md:items-start md:text-left">
               <div data-reveal="scale" style={{ "--d": "150ms" } as CSSProperties} className="frame-marks is-static mb-4 h-28 w-28 p-2.5 [--m:0px]">
                 <img
-                  src="https://yt3.googleusercontent.com/sv9i_OP0uL2wvUJfCbgaivEhWSnnZl6uV23xkPxMVqxANnpBR5ej3MrSEFG9uZuZxV-E__Md=s900-c-k-c0x00ffffff-no-rj"
-                  alt="AradirOff"
+                  src="https://i.scdn.co/image/ab67616100005174458eaf37b37d44be943e040f"
+                  alt="Wefere"
                   width={112}
                   height={112}
                   className="h-full w-full rounded-md object-cover"
@@ -31,7 +31,7 @@ export default function Testimonial() {
                   referrerPolicy="no-referrer"
                 />
               </div>
-              <h4 className="font-heading text-xl font-semibold text-foreground">AradirOff</h4>
+              <h4 className="font-heading text-xl font-semibold text-foreground">Wefere</h4>
               <p className="mt-2 rounded-sm border border-line-2 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
                 Youtuber
               </p>
@@ -50,7 +50,7 @@ export default function Testimonial() {
                 style={{ "--d": "120ms" } as CSSProperties}
                 className="relative font-heading text-xl font-normal leading-snug text-foreground/90 sm:text-2xl md:text-[1.7rem]"
               >
-                &ldquo;Mi canal pasó de 500k a 800k suscriptores en menos de 3 meses gracias a las ediciones de Freecss. El ritmo de los videos mejoró significativamente la retención, lo que se reflejó directamente en un crecimiento acelerado del canal.&rdquo;
+                &ldquo;Mi canal pasó de 2.5 millones a 3.2 millones de suscriptores en menos de 3 meses gracias a las ediciones de Freecss. El ritmo de los videos mejoró significativamente la retención, lo que se reflejó directamente en un crecimiento acelerado del canal.&rdquo;
               </blockquote>
 
               {/* Growth readout */}
@@ -61,18 +61,18 @@ export default function Testimonial() {
               >
                 <div className="shrink-0">
                   <div className="font-heading text-3xl font-semibold tracking-tight text-accent md:text-4xl">
-                    <CountUp to={300} prefix="+" suffix="K" />
+                    <CountUp to={700} prefix="+" suffix="K" />
                   </div>
                   <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">Nuevos suscriptores</div>
                 </div>
                 <div className="flex-1" aria-hidden="true">
                   <div className="mb-1.5 flex justify-between font-mono text-[10px] text-dim">
-                    <span>500K</span>
-                    <span className="text-foreground/80">800K</span>
+                    <span>2.5M</span>
+                    <span className="text-foreground/80">3.2M</span>
                   </div>
                   <div className="relative h-2 overflow-hidden rounded-[2px] bg-panel-3">
-                    <div className="absolute inset-y-0 left-0 w-[62.5%] bg-line-2" />
-                    <div className="growth-bar absolute inset-y-0 left-[62.5%] right-0 origin-left bg-accent" />
+                    <div className="absolute inset-y-0 left-0 w-[78.125%] bg-line-2" />
+                    <div className="growth-bar absolute inset-y-0 left-[78.125%] right-0 origin-left bg-accent" />
                   </div>
                 </div>
               </div>
