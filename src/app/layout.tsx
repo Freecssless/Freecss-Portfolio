@@ -65,24 +65,14 @@ export const metadata: Metadata = {
     ],
     creator: "@Freecss_less",
   },
+  // Square, lightweight versions of https://i.postimg.cc/7h2WQzzM/Galede-OSio.png served from /public
   icons: {
     icon: [
-      {
-        url: "https://i.postimg.cc/8kK3Pp4N/Portfolio-Preview.png",
-        sizes: "192x192",
-        type: "image/png",
-      },
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
     ],
-    apple: [
-      {
-        url: "https://i.postimg.cc/8kK3Pp4N/Portfolio-Preview.png",
-        sizes: "180x180",
-        type: "image/png",
-      },
-    ],
-    shortcut: [
-      "https://i.postimg.cc/8kK3Pp4N/Portfolio-Preview.png",
-    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    shortcut: ["/icons/favicon-32.png"],
   },
 };
 
@@ -98,6 +88,9 @@ export default function RootLayout({
     >
       <head>
         <link rel="preconnect" href="https://i.ytimg.com" />
+        <link rel="preconnect" href="https://www.youtube-nocookie.com" />
+        <link rel="preconnect" href="https://www.youtube.com" />
+        <link rel="dns-prefetch" href="https://www.google.com" />
         <link rel="preconnect" href="https://i.postimg.cc" />
         <link rel="preconnect" href="https://mir-s3-cdn-cf.behance.net" />
         <noscript>

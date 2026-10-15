@@ -63,7 +63,8 @@ export default function Interactions() {
         (x, y, r) => {
           el.style.setProperty("--mx", `${x}px`);
           el.style.setProperty("--my", `${y}px`);
-          if (tilt) {
+          // a panel can opt out temporarily (e.g. while its video is playing)
+          if (tilt && el.dataset.tiltOff !== "true") {
             el.style.setProperty("--ry", `${((x / r.width - 0.5) * max).toFixed(2)}deg`);
             el.style.setProperty("--rx", `${((0.5 - y / r.height) * max).toFixed(2)}deg`);
           }

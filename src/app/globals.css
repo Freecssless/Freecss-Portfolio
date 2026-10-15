@@ -436,6 +436,72 @@ a:hover .roll-target .roll > span {
   opacity: 1;
 }
 
+/* While the featured video plays, the monitor stays still and clean */
+[data-tilt-off="true"].spot::before,
+[data-tilt-off="true"].spot::after {
+  display: none;
+}
+
+/* Featured player in fullscreen: video centred, transport + timeline below */
+.player-fs:fullscreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg);
+}
+.player-fs:fullscreen > * {
+  width: min(100%, calc((100vh - 150px) * 16 / 9));
+}
+
+/* Muted preview players inside work cards (see EditingStyles) */
+.clip-preview {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.9s var(--ease-out);
+  pointer-events: none;
+}
+.clip-preview.is-ready {
+  opacity: 1;
+}
+/* the iframe is taller than the card: the video still fills the width, and
+   YouTube's title bar / logo end up in the cropped-away letterbox */
+.clip-preview iframe {
+  position: absolute;
+  left: 0;
+  top: -70px;
+  width: 100%;
+  height: calc(100% + 140px);
+  border: 0;
+}
+/* Shorts embeds keep a "like" button in the bottom-right corner: a slight
+   push-in anchored to the top of the frame leaves it outside the crop */
+.clip-preview.is-vertical iframe {
+  transform: scale(1.2);
+  transform-origin: 50% 70px;
+}
+
+/* Thin accent "render" bar on a work card while its preview is prepared */
+.render-bar {
+  background: linear-gradient(90deg, transparent, var(--accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.render-bar.is-rendering {
+  opacity: 1;
+  animation: render-fill 4.5s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+@keyframes render-fill {
+  to {
+    transform: scaleX(1);
+  }
+}
+
 /* Animated waveform on clip cards */
 .wave rect {
   transform-box: fill-box;

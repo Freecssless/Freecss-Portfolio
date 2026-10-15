@@ -1,7 +1,8 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import SectionHeader from "./ui/SectionHeader";
+import { type YTPlayer, YT_HOST, loadYouTubeApi } from "./ui/youtube";
 
 type Clip = {
   title: string;
@@ -124,6 +125,157 @@ function Waveform({ seed }: { seed: number }) {
   );
 }
 
+const youtubeId = (url: string) => url.match(/(?:v=|shorts\/|youtu\.be\/)([\w-]{11})/)?.[1] ?? "";
+
+/**
+ * Silent looping preview of the clip.
+ * YouTube flashes its own transport buttons for ~3s every time playback starts
+ * (and again on resume), so players are started *ahead of time* and then kept
+ * running: on desktop as soon as the page is idle, on phones when the card gets
+ * within ~3 screens (to save mobile data). The thumbnail, with a thin render
+ * bar, covers the player until those buttons are gone. Looping is done by
+ * seeking back just before the end, which doesn't trigger the buttons again.
+ * Skipped entirely with "data saver".
+ */
+/** seconds of playback after which YouTube has hidden its start-up buttons */
+const REVEAL_AT_SECONDS = 3.2;
+/** after a stall / seek / loop YouTube keeps them on screen a little longer */
+const REVEAL_AFTER_STALL_SECONDS = 5;
+
+function usePreviewsAllowed() {
+  const [allowed, setAllowed] = useState(false);
+  useEffect(() => {
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    if (conn?.saveData) return;
+    // never compete with the initial page load
+    const go = () => window.setTimeout(() => setAllowed(true), 600);
+    if (document.documentElement.dataset.loaded === "true") go();
+    else window.addEventListener("loader:done", go, { once: true });
+    const fallback = window.setTimeout(() => setAllowed(true), 4500);
+    return () => {
+      window.removeEventListener("loader:done", go);
+      window.clearTimeout(fallback);
+    };
+  }, []);
+  return allowed;
+}
+
+function Preview({ id, vertical = false }: { id: string; vertical?: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const hostRef = useRef<HTMLDivElement>(null);
+  const allowed = usePreviewsAllowed();
+  const [inRange, setInRange] = useState(false);
+  const [ready, setReady] = useState(false);
+  const active = allowed && inRange && !!id;
+
+  // alive while the card is within the look-ahead range, destroyed when far away
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const desktop = window.matchMedia("(min-width: 1024px)").matches;
+    const io = new IntersectionObserver(([entry]) => setInRange(entry.isIntersecting), {
+      rootMargin: desktop ? "400% 0px" : "300% 0px",
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // create / destroy the muted player
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!active || !host) return;
+    let cancelled = false;
+    let played = 0; // seconds of continuous playback since the (re)start
+    let last = 0;
+    let threshold = REVEAL_AT_SECONDS;
+    let loopTimer = 0;
+    let player: YTPlayer | null = null;
+    loadYouTubeApi().then((YT) => {
+      if (cancelled) return;
+      const mount = document.createElement("div");
+      host.appendChild(mount);
+      player = new YT.Player(mount, {
+        videoId: id,
+        host: YT_HOST,
+        width: "100%",
+        height: "100%",
+        playerVars: {
+          autoplay: 1,
+          mute: 1,
+          controls: 0,
+          loop: 1,
+          playlist: id,
+          playsinline: 1,
+          rel: 0,
+          iv_load_policy: 3,
+          cc_load_policy: 0,
+          disablekb: 1,
+          fs: 0,
+          modestbranding: 1,
+        },
+        events: {
+          onReady: (e) => {
+            e.target.mute();
+            e.target.playVideo();
+            loopTimer = window.setInterval(() => {
+              const p = e.target;
+              const cur = p.getCurrentTime();
+              const dur = p.getDuration();
+              // reveal once enough real playback has happened for YouTube's buttons to hide
+              if (cur > last) played += cur - last;
+              last = cur;
+              if (played >= threshold && !cancelled) setReady(true);
+              // seamless loop: jump back before the end so playback never "restarts"
+              if (dur > 2 && cur > dur - 0.8) {
+                p.seekTo(0, true);
+                last = 0;
+              }
+            }, 250);
+          },
+          // embedding refused (e.g. LAN IP): just keep the thumbnail
+          onError: (e) => e.target.destroy(),
+          onStateChange: (e) => {
+            if (e.data === 1) {
+              // muted autoplay turns on auto-captions: drop them
+              e.target.unloadModule?.("captions");
+              e.target.unloadModule?.("cc");
+            } else {
+              // any stall / seek / restart makes YouTube flash its buttons again:
+              // cover with the thumbnail until enough clean playback has happened
+              if (played > 0) threshold = REVEAL_AFTER_STALL_SECONDS;
+              played = 0;
+              last = e.target.getCurrentTime() || 0;
+              setReady(false);
+            }
+          },
+        },
+      });
+    });
+    return () => {
+      cancelled = true;
+      window.clearInterval(loopTimer);
+      player?.destroy();
+      host.innerHTML = "";
+      setReady(false);
+    };
+  }, [active, id]);
+
+  return (
+    <>
+      <div ref={ref} className={`clip-preview ${vertical ? "is-vertical" : ""} ${ready ? "is-ready" : ""}`} aria-hidden="true">
+        <div ref={hostRef} className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.05]" />
+      </div>
+      {/* render bar while the preview is being prepared */}
+      <span
+        aria-hidden="true"
+        className={`render-bar pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-[2px] ${
+          active && !ready ? "is-rendering" : ""
+        }`}
+      />
+    </>
+  );
+}
+
 /** Timeline-clip card, horizontal (16:9) or vertical reel (9:16). */
 function ClipCard({ clip, index, vertical = false }: { clip: Clip; index: number; vertical?: boolean }) {
   const tag = `${vertical ? "Reel" : "Clip"}_${String(index + 1).padStart(2, "0")}`;
@@ -151,6 +303,7 @@ function ClipCard({ clip, index, vertical = false }: { clip: Clip; index: number
           decoding="async"
           referrerPolicy="no-referrer"
         />
+        <Preview id={youtubeId(clip.url)} vertical={vertical} />
         {vertical && (
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/25" />
         )}
@@ -219,6 +372,21 @@ function ClipCard({ clip, index, vertical = false }: { clip: Clip; index: number
 }
 
 export default function EditingStyles() {
+  // Warm up YouTube's player script once the page has finished loading, so the
+  // previews don't have to wait for it when the visitor reaches this section.
+  useEffect(() => {
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    if (conn?.saveData) return;
+    const warm = () => void loadYouTubeApi();
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
+    const schedule = () => {
+      if (w.requestIdleCallback) w.requestIdleCallback(warm, { timeout: 3000 });
+      else setTimeout(warm, 1200);
+    };
+    if (document.readyState === "complete") schedule();
+    else window.addEventListener("load", schedule, { once: true });
+  }, []);
+
   return (
     <section id="videos" data-scene="2" className="relative px-4 py-20 sm:px-6 md:py-28 lg:px-8">
       <div className="mx-auto max-w-6xl">

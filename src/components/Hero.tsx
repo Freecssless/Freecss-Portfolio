@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { type CSSProperties, useRef } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Roll from "./ui/Roll";
-import Timecode from "./ui/Timecode";
+import FeaturedPlayer from "./FeaturedPlayer";
 
 const d = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
@@ -30,9 +30,17 @@ export default function Hero() {
   const monitorScale = useTransform(scrollYProgress, [0, 1], [1, 0.92]);
   const monitorOpacity = useTransform(scrollYProgress, [0.2, 0.95], [1, 0]);
 
-  const handleVideoClick = () => {
-    window.open("https://youtu.be/ck3W68KUsyg", "_blank");
-  };
+  // Parallax only for the side-by-side desktop layout: on phones/tablets the
+  // monitor sits below the copy, and fading it would hide the video right when
+  // you scroll to it.
+  const [parallax, setParallax] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const update = () => setParallax(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   return (
     <section
@@ -44,7 +52,7 @@ export default function Hero() {
       <div className="mx-auto w-full max-w-7xl">
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
           {/* Left content */}
-          <motion.div style={{ y: copyY, opacity: copyOpacity }} className="text-center lg:text-left">
+          <motion.div style={parallax ? { y: copyY, opacity: copyOpacity } : undefined} className="text-center lg:text-left">
             <span
               data-reveal
               data-ascii-mask
@@ -114,7 +122,7 @@ export default function Hero() {
 
           {/* Right — featured video as a "Program monitor" */}
           <motion.div
-            style={{ y: monitorY, scale: monitorScale, opacity: monitorOpacity }}
+            style={parallax ? { y: monitorY, scale: monitorScale, opacity: monitorOpacity } : undefined}
             className="relative"
           >
           <div data-reveal="right" style={d(300)}>
@@ -131,64 +139,7 @@ export default function Hero() {
               </div>
 
               <div className="p-3 sm:p-4">
-                <button
-                  type="button"
-                  onClick={handleVideoClick}
-                  className="group relative block aspect-video w-full overflow-hidden rounded-md bg-black"
-                  aria-label="Ver video destacado en YouTube"
-                >
-                  <div className="wipe frame-marks absolute inset-0">
-                    <img
-                      src="https://i.ytimg.com/vi_webp/ck3W68KUsyg/maxresdefault.webp"
-                      alt="Featured Video"
-                      width={1280}
-                      height={720}
-                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                      loading="eager"
-                      decoding="async"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 transition-opacity duration-500 group-hover:opacity-60" />
-                  <span className="absolute left-3 top-3 z-[4] rounded-sm bg-black/60 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-white/80 backdrop-blur">
-                    YouTube
-                  </span>
-                  {/* Play button */}
-                  <span className="absolute inset-0 z-[4] flex items-center justify-center">
-                    <span className="flex h-16 w-16 items-center justify-center rounded-full border border-white/25 bg-black/40 text-white backdrop-blur-md transition-all duration-500 ease-out group-hover:scale-110 group-hover:border-accent group-hover:bg-accent group-hover:text-background">
-                      <svg className="ml-1 h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.69L9.54 5.98C8.87 5.55 8 6.03 8 6.82z" />
-                      </svg>
-                    </span>
-                  </span>
-                </button>
-
-                {/* Transport bar (decorative) */}
-                <div className="mt-3 flex items-center justify-between gap-3 font-mono text-[11px] text-muted" aria-hidden="true">
-                  <Timecode className="text-accent" />
-                  <div className="flex items-center gap-3 text-foreground/70">
-                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M6 6h2v12H6zM9.5 12 18 6v12z" />
-                    </svg>
-                    <svg className="h-4 w-4 text-foreground" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z" />
-                    </svg>
-                  </div>
-                  <span className="hidden sm:inline">Ajustar ▾</span>
-                </div>
-
-                {/* Mini timeline scrubber */}
-                <div className="relative mt-3 h-7 overflow-hidden rounded-sm border border-line bg-background/60" aria-hidden="true">
-                  <div className="ruler absolute inset-x-0 top-0 opacity-80" />
-                  <div className="absolute bottom-1 left-[6%] right-[40%] h-2.5 rounded-[2px] bg-accent/25 ring-1 ring-inset ring-accent/50" />
-                  <div className="absolute bottom-1 left-[61%] right-[8%] h-2.5 rounded-[2px] bg-foreground/10 ring-1 ring-inset ring-foreground/20" />
-                  <div className="animate-scrub absolute inset-y-0 w-px bg-accent">
-                    <span className="absolute -left-[3px] top-0 h-1.5 w-[7px] bg-accent" />
-                  </div>
-                </div>
+                <FeaturedPlayer />
               </div>
             </div>
           </div>
