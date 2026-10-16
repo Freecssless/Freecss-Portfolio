@@ -402,6 +402,39 @@ a:hover .roll-target .roll > span {
 }
 
 /* ───────────────────────── Cards: tilt + spotlight ───────────────────────── */
+/* Registered as non-inherited: updating them on every pointer move only
+   restyles the card itself, not everything inside it (video, waveform, …) */
+@property --rx {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@property --ry {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@property --lift {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --tx {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --ty {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --s {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
 [data-tilt] {
   transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translate3d(0, var(--lift, 0px), 0);
   transition:
@@ -417,38 +450,76 @@ a:hover .roll-target .roll > span {
     box-shadow 0.6s var(--ease-out);
 }
 
-/* Spotlight that follows the cursor (inner wash + border glow) */
-.spot::before,
-.spot::after {
-  content: "";
+/* Spotlight that follows the cursor (inner wash + border glow).
+   The layers are injected by <Interactions/>; their gradients are painted once
+   and only *moved* with transform, so following the cursor never repaints the
+   card (or the video playing inside it). */
+.spot-fx {
   position: absolute;
   inset: 0;
+  z-index: 6;
   border-radius: inherit;
+  overflow: hidden;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.5s ease;
-  z-index: 6;
+  contain: layout paint;
 }
-.spot::before {
-  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(var(--accent-rgb), 0.09), transparent 60%);
-}
-.spot::after {
-  padding: 1px;
-  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), rgba(var(--accent-rgb), 0.95), transparent 70%);
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-}
-.spot:hover::before,
-.spot:hover::after {
+.spot:hover > .spot-fx {
   opacity: 1;
+}
+.spot-wash,
+.spot-ring-glow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform;
+}
+.spot-wash {
+  width: 840px;
+  height: 840px;
+  margin: -420px 0 0 -420px;
+  background: radial-gradient(420px circle at 50% 50%, rgba(var(--accent-rgb), 0.09), transparent 60%);
+}
+/* border glow = four 1px edge strips (cheap rectangular clips) instead of a
+   CSS mask, which forced the whole card to be re-composited every frame */
+.spot-edge {
+  position: absolute;
+  overflow: hidden;
+}
+.spot-edge.is-top {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+.spot-edge.is-bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+.spot-edge.is-left {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+}
+.spot-edge.is-right {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 1px;
+}
+.spot-ring-glow {
+  width: 480px;
+  height: 480px;
+  margin: -240px 0 0 -240px;
+  background: radial-gradient(240px circle at 50% 50%, rgba(var(--accent-rgb), 0.95), transparent 70%);
 }
 
 /* While the featured video plays, the monitor stays still and clean */
-[data-tilt-off="true"].spot::before,
-[data-tilt-off="true"].spot::after {
+[data-tilt-off="true"].spot > .spot-fx {
   display: none;
 }
 
@@ -509,24 +580,6 @@ a:hover .roll-target .roll > span {
 @keyframes render-fill {
   to {
     transform: scaleX(1);
-  }
-}
-
-/* Animated waveform on clip cards */
-.wave rect {
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.group:hover .wave rect {
-  animation: wave-bounce 0.9s ease-in-out infinite alternate;
-  animation-delay: calc(var(--i) * -37ms);
-}
-@keyframes wave-bounce {
-  from {
-    transform: scaleY(0.35);
-  }
-  to {
-    transform: scaleY(1.15);
   }
 }
 

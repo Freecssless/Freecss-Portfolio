@@ -91,38 +91,113 @@ function StarIcon() {
   );
 }
 
-/** Deterministic audio-waveform strip so every clip looks like a timeline clip (SSR safe). */
+/**
+ * Audio-waveform strip so every clip looks like a timeline clip.
+ * Drawn on a tiny canvas: on hover the bars bounce in a travelling ripple and
+ * turn accent-coloured. One canvas layer is far cheaper for the browser than
+ * animating 64 separate bars (that made hovering cards with videos stutter),
+ * and it only animates while the pointer is over that card.
+ */
+const WAVE_BARS = 64;
+const WAVE_PERIOD = 0.9; // s, one bounce (then it plays back: "alternate")
+const WAVE_STAGGER = 0.037; // s between neighbouring bars → travelling ripple
+const WAVE_COLOR_MS = 500;
+const WAVE_IDLE = [48, 48, 55, 1]; // --line-2
+const WAVE_HOVER = [143, 140, 255, 0.7]; // accent / 70%
+
+const easeInOut = (x: number) => (x < 0.5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2);
+
 function Waveform({ seed }: { seed: number }) {
-  const bars = 64;
-  const heights = Array.from({ length: bars }, (_, i) => {
-    const x = i / bars;
-    const h =
-      Math.abs(Math.sin(i * 0.55 + seed * 1.7) * 0.55 + Math.sin(i * 0.17 + seed) * 0.35) *
-      (0.55 + 0.45 * Math.sin(Math.PI * x));
-    // rounded so server and client markup match exactly
-    return Math.round(Math.max(0.08, Math.min(1, h)) * 100) / 100;
-  });
-  return (
-    <svg
-      className="wave h-full w-full text-line-2 transition-colors duration-500 group-hover:text-accent/70"
-      viewBox={`0 0 ${bars * 3} 20`}
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      {heights.map((h, i) => (
-        <rect
-          key={`w-${seed}-${i}`}
-          x={i * 3}
-          y={(10 - h * 9).toFixed(2)}
-          width={1.6}
-          height={(h * 18).toFixed(2)}
-          rx={0.6}
-          fill="currentColor"
-          style={{ "--i": i } as CSSProperties}
-        />
-      ))}
-    </svg>
-  );
+  const ref = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = ref.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+    const heights = Array.from({ length: WAVE_BARS }, (_, i) => {
+      const x = i / WAVE_BARS;
+      const h =
+        Math.abs(Math.sin(i * 0.55 + seed * 1.7) * 0.55 + Math.sin(i * 0.17 + seed) * 0.35) *
+        (0.55 + 0.45 * Math.sin(Math.PI * x));
+      return Math.max(0.08, Math.min(1, h));
+    });
+
+    let W = 0;
+    let H = 0;
+    let hovered = false;
+    let bounceStart = 0;
+    let color = 0; // 0 idle → 1 hover
+    let colorFrom = 0;
+    let colorAt = 0;
+    let raf = 0;
+
+    const draw = (now: number) => {
+      if (!W || !H) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      const mix = easeInOut(color);
+      const c = WAVE_IDLE.map((v, k) => v + (WAVE_HOVER[k] - v) * mix);
+      ctx.fillStyle = `rgba(${c[0] | 0}, ${c[1] | 0}, ${c[2] | 0}, ${c[3].toFixed(3)})`;
+      const slot = W / WAVE_BARS;
+      const bw = slot * 0.533;
+      const off = (slot - bw) / 2;
+      const t = (now - bounceStart) / 1000;
+      for (let i = 0; i < WAVE_BARS; i++) {
+        let s = 1;
+        if (hovered) {
+          const ph = ((t + i * WAVE_STAGGER) / WAVE_PERIOD) % 2;
+          s = 0.35 + 0.8 * easeInOut(ph < 1 ? ph : 2 - ph);
+        }
+        const bh = H * 0.9 * heights[i] * s;
+        ctx.fillRect(i * slot + off, (H - bh) / 2, bw, bh);
+      }
+    };
+
+    const loop = (now: number) => {
+      const target = hovered ? 1 : 0;
+      color = Math.min(1, (now - colorAt) / WAVE_COLOR_MS);
+      color = colorFrom + (target - colorFrom) * color;
+      draw(now);
+      raf = hovered || color !== target ? requestAnimationFrame(loop) : 0;
+    };
+
+    const setHover = (on: boolean) => {
+      if (on === hovered) return;
+      colorFrom = color;
+      colorAt = performance.now();
+      hovered = on;
+      if (on) bounceStart = performance.now();
+      if (!raf) raf = requestAnimationFrame(loop);
+    };
+
+    const resize = () => {
+      const r = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = r.width;
+      H = r.height;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      draw(performance.now());
+    };
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
+
+    const card = canvas.closest<HTMLElement>(".group");
+    const enter = () => setHover(true);
+    const leave = () => setHover(false);
+    card?.addEventListener("pointerenter", enter);
+    card?.addEventListener("pointerleave", leave);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      card?.removeEventListener("pointerenter", enter);
+      card?.removeEventListener("pointerleave", leave);
+    };
+  }, [seed]);
+
+  return <canvas ref={ref} className="block h-full w-full" aria-hidden="true" />;
 }
 
 const youtubeId = (url: string) => url.match(/(?:v=|shorts\/|youtu\.be\/)([\w-]{11})/)?.[1] ?? "";
