@@ -208,17 +208,27 @@ img {
   flex: none;
 }
 .dot-rec {
+  position: relative;
   background: var(--rec);
-  box-shadow: 0 0 0 0 rgba(255, 90, 90, 0.6);
+}
+/* pulse ring animated with transform/opacity only (GPU), not box-shadow */
+.dot-rec::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(255, 90, 90, 0.55);
   animation: rec-pulse 2s var(--ease-out) infinite;
 }
 @keyframes rec-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 90, 90, 0.55);
+    transform: scale(1);
+    opacity: 1;
   }
   70%,
   100% {
-    box-shadow: 0 0 0 7px rgba(255, 90, 90, 0);
+    transform: scale(3.3);
+    opacity: 0;
   }
 }
 
@@ -553,12 +563,13 @@ a:hover .roll-target .roll > span {
 [data-reveal="card"] {
   transform: perspective(1200px) translate3d(0, 70px, 0) rotateX(16deg) scale(0.94);
   transform-origin: 50% 100%;
-  filter: blur(6px) brightness(0.6);
+  /* no filter here: blurring a big card (with video inside) every frame while
+     scrolling is very expensive; the 3D lift + image wipe carry the entrance */
+  filter: none;
   /* opacity settles first so the ASCII never shows through a half-faded card */
   transition:
     opacity 0.45s ease-out,
-    transform 1.2s var(--ease-out),
-    filter 0.9s var(--ease-out);
+    transform 1.2s var(--ease-out);
   transition-delay: var(--d, 0ms);
 }
 [data-reveal="pop"] {
@@ -624,21 +635,6 @@ main .panel :is(h1, h2, p, blockquote) {
 }
 
 /* ───────────────────────── Decorative ───────────────────────── */
-@keyframes playhead-scrub {
-  0% {
-    left: 6%;
-  }
-  50% {
-    left: 88%;
-  }
-  100% {
-    left: 6%;
-  }
-}
-.animate-scrub {
-  animation: playhead-scrub 14s var(--ease-in-out) infinite;
-}
-
 @keyframes scroll-hint {
   0% {
     transform: translate3d(0, -100%, 0);

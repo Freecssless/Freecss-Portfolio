@@ -142,6 +142,38 @@ const REVEAL_AT_SECONDS = 3.2;
 /** after a stall / seek / loop YouTube keeps them on screen a little longer */
 const REVEAL_AFTER_STALL_SECONDS = 5;
 
+/*
+ * Booting a YouTube player is a burst of main-thread work. Several at once
+ * (e.g. while scrolling) caused visible hitches, so players are started one at
+ * a time, when the browser is idle, with a short gap between them.
+ */
+const bootQueue: (() => void)[] = [];
+let booting = false;
+function pumpBootQueue() {
+  if (booting) return;
+  const job = bootQueue.shift();
+  if (!job) return;
+  booting = true;
+  const run = () => {
+    job();
+    window.setTimeout(() => {
+      booting = false;
+      pumpBootQueue();
+    }, 350);
+  };
+  const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
+  if (w.requestIdleCallback) w.requestIdleCallback(run, { timeout: 1200 });
+  else window.setTimeout(run, 60);
+}
+function scheduleBoot(job: () => void) {
+  bootQueue.push(job);
+  pumpBootQueue();
+  return () => {
+    const i = bootQueue.indexOf(job);
+    if (i >= 0) bootQueue.splice(i, 1);
+  };
+}
+
 function usePreviewsAllowed() {
   const [allowed, setAllowed] = useState(false);
   useEffect(() => {
@@ -190,7 +222,8 @@ function Preview({ id, vertical = false }: { id: string; vertical?: boolean }) {
     let threshold = REVEAL_AT_SECONDS;
     let loopTimer = 0;
     let player: YTPlayer | null = null;
-    loadYouTubeApi().then((YT) => {
+    const cancelBoot = scheduleBoot(() =>
+      loadYouTubeApi().then((YT) => {
       if (cancelled) return;
       const mount = document.createElement("div");
       host.appendChild(mount);
@@ -250,9 +283,11 @@ function Preview({ id, vertical = false }: { id: string; vertical?: boolean }) {
           },
         },
       });
-    });
+      })
+    );
     return () => {
       cancelled = true;
+      cancelBoot();
       window.clearInterval(loopTimer);
       player?.destroy();
       host.innerHTML = "";
@@ -307,11 +342,11 @@ function ClipCard({ clip, index, vertical = false }: { clip: Clip; index: number
         {vertical && (
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/25" />
         )}
-        <span className="absolute left-2.5 top-2.5 z-[4] rounded-sm bg-black/60 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-white/85 backdrop-blur">
+        <span className="absolute left-2.5 top-2.5 z-[4] rounded-sm bg-black/70 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-white/85">
           {tag}
         </span>
         {vertical && (
-          <span className="absolute right-2.5 top-2.5 z-[4] rounded-sm border border-white/20 bg-black/50 px-1.5 py-0.5 font-mono text-[10px] text-white/80 backdrop-blur">
+          <span className="absolute right-2.5 top-2.5 z-[4] rounded-sm border border-white/20 bg-black/65 px-1.5 py-0.5 font-mono text-[10px] text-white/80">
             9:16
           </span>
         )}
@@ -326,7 +361,7 @@ function ClipCard({ clip, index, vertical = false }: { clip: Clip; index: number
         </span>
 
         {/* YouTube badge */}
-        <span className="absolute bottom-2.5 right-2.5 z-[4] flex translate-y-1 items-center gap-1 rounded-sm bg-black/70 px-2 py-1 text-[10px] font-medium text-white opacity-0 backdrop-blur transition-all duration-500 ease-out group-hover:translate-y-0 group-hover:opacity-100">
+        <span className="absolute bottom-2.5 right-2.5 z-[4] flex translate-y-1 items-center gap-1 rounded-sm bg-black/80 px-2 py-1 text-[10px] font-medium text-white opacity-0 transition-all duration-500 ease-out group-hover:translate-y-0 group-hover:opacity-100">
           <svg className="h-3 w-3 text-rec" viewBox="0 0 24 24" fill="currentColor">
             <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
           </svg>

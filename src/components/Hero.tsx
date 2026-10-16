@@ -56,7 +56,7 @@ export default function Hero() {
             <span
               data-reveal
               data-ascii-mask
-              className="mb-7 inline-flex items-center gap-2.5 rounded-md border border-line bg-panel/80 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted backdrop-blur"
+              className="mb-7 inline-flex items-center gap-2.5 rounded-md border border-line bg-panel/90 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-muted"
             >
               <span className="dot dot-rec" />
               Editor Profesional de Videos

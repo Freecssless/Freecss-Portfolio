@@ -66,7 +66,7 @@ export default function Clients() {
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  <span className="absolute left-2 top-2 z-[4] rounded-sm bg-black/60 px-1.5 py-0.5 font-mono text-[10px] text-white/80 backdrop-blur">
+                  <span className="absolute left-2 top-2 z-[4] rounded-sm bg-black/70 px-1.5 py-0.5 font-mono text-[10px] text-white/80">
                     0{index + 1}
                   </span>
                 </div>

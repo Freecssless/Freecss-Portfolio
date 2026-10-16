@@ -84,7 +84,7 @@ export default function Header() {
       <div
         className={`border-b transition-[background-color,border-color] duration-500 ${
           scrolled || isMenuOpen
-            ? "border-line bg-background/80 backdrop-blur-xl"
+            ? "border-line bg-background/90"
             : "border-transparent bg-transparent"
         }`}
       >

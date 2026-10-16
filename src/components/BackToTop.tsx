@@ -24,7 +24,7 @@ export default function BackToTop() {
     <a
       href="#home"
       aria-label="Volver arriba"
-      className={`group fixed bottom-5 right-5 z-50 flex h-11 w-11 items-center justify-center rounded-md border border-line-2 bg-panel/90 text-foreground backdrop-blur-md transition-all duration-500 ease-out hover:border-accent hover:bg-accent hover:text-background sm:bottom-6 sm:right-6 ${
+      className={`group fixed bottom-5 right-5 z-50 flex h-11 w-11 items-center justify-center rounded-md border border-line-2 bg-panel/95 text-foreground transition-all duration-500 ease-out hover:border-accent hover:bg-accent hover:text-background sm:bottom-6 sm:right-6 ${
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
       }`}
     >

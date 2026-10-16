@@ -43,7 +43,7 @@ function LinkList({ title, links }: { title: string; links: { href: string; labe
 
 export default function Footer() {
   return (
-    <footer data-scene="4" className="relative border-t border-line bg-background/85 px-4 pt-14 backdrop-blur-sm sm:px-6 lg:px-8">
+    <footer data-scene="4" className="relative border-t border-line bg-background/90 px-4 pt-14 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-10 pb-12 sm:grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr]">
           {/* Logo & social */}
