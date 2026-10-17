@@ -7,6 +7,7 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import AsciiBackground from "@/components/AsciiBackground";
 import ScrollRuler from "@/components/ScrollRuler";
+import QuoteCalculator from "@/components/QuoteCalculator";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
       <ScrollRuler start={0} />
       <Clients />
       <EditingStyles />
+      <QuoteCalculator />
       <ScrollRuler start={96} />
       <Testimonial />
       <Contact />

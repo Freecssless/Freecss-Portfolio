@@ -337,13 +337,64 @@ const cubes: Scene = (buf, g, t) => {
   }
 };
 
-/** Two figures per section: [section][variant] */
+// Quote A — segmented audio level meters with peak hold
+const meters = field((u, v, t) => {
+  if (Math.abs(u) > 1.75 || v > 0.8 || v < -0.85) return 0;
+  const x = u * 0.8;
+  const col = Math.floor(x * 9);
+  if (fract(x * 9) > 0.68) return 0;
+  const level = clamp01(
+    0.22 +
+      0.62 * Math.abs(Math.sin(t * 1.7 + col * 0.9) * Math.sin(t * 0.63 + col * 0.31)) +
+      0.12 * hash(col * 3.1 + Math.floor(t * 7))
+  );
+  const top = 0.75 - 1.5 * level;
+  const fade = 1 - smooth(1.2, 1.75, Math.abs(u));
+  // peak-hold marker floating a bit above the bar
+  const peak = 0.75 - 1.5 * clamp01(level + 0.08);
+  if (Math.abs(v - peak) < 0.018) return 0.95 * fade;
+  if (v < top) return 0;
+  // segmented blocks; hotter towards the top of the scale
+  if (fract((v + 1) * 16) > 0.72) return 0.06 * fade;
+  const heat = clamp01((0.75 - v) / 1.5);
+  return clamp01((0.3 + 0.55 * heat) * fade);
+});
+
+// Quote B — render "buckets": tiles filling in order, the active one scanning
+const renderTiles = field((u, v, t) => {
+  if (Math.abs(u) > 1.5 || Math.abs(v) > 0.84) return 0;
+  const size = 0.24;
+  const cols = Math.floor(3 / size);
+  const tx = Math.floor((u + 1.5) / size);
+  const ty = Math.floor((v + 0.84) / size);
+  const lx = fract((u + 1.5) / size);
+  const ly = fract((v + 0.84) / size);
+  const total = cols * Math.ceil(1.68 / size);
+  const progress = fract(t / 22) * (total + 4);
+  const idx = ty * cols + tx;
+  const border = lx < 0.07 || lx > 0.93 || ly < 0.07 || ly > 0.93;
+  const fade = 1 - smooth(1.15, 1.5, Math.abs(u));
+  if (idx === Math.floor(progress)) {
+    // the bucket being rendered: bright corners + a scanline sweeping down
+    const corner = (lx < 0.22 || lx > 0.78) && (ly < 0.22 || ly > 0.78);
+    if (border && corner) return fade;
+    return Math.abs(ly - fract(progress)) < 0.06 ? 0.7 * fade : 0.08 * fade;
+  }
+  if (idx < progress) {
+    const tex = 0.18 + 0.22 * hash(idx * 7.3 + Math.floor(lx * 6) * 1.7 + Math.floor(ly * 6) * 3.1);
+    return (border ? 0.45 : tex) * fade;
+  }
+  return (border ? 0.12 : 0) * fade;
+});
+
+/** Two figures per section: [section][variant] (index = the section's data-scene) */
 const SECTIONS: Scene[][] = [
   [globe, torus],
   [spectrum, scope],
   [timeline, film],
   [aperture, vectorscope],
   [tunnel, cubes],
+  [meters, renderTiles],
 ];
 const EMPTY: Scene = (buf) => buf.fill(0);
 

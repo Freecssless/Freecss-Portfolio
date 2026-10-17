@@ -86,7 +86,7 @@ export default function Contact() {
     <section id="contact" data-scene="4" className="relative px-4 py-20 sm:px-6 md:py-28 lg:px-8">
       <div className="mx-auto max-w-5xl">
         <SectionHeader
-          index="03"
+          index="04"
           label="Contacto"
           align="center"
           title={
